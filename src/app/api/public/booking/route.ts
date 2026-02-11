@@ -106,8 +106,14 @@ export async function POST(request: Request) {
       })
     }
 
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000"
+    const hasLinkedForms = bookingType.linkedFormIds.length > 0
+    const formsUrl = hasLinkedForms ? `${baseUrl}/forms/${publicToken}` : null
+
     if (phone) {
-      const smsBody = `Hi ${name}, your booking request for ${bookingType.name} on ${format(startDate, "MMM d, yyyy 'at' h:mm a")} has been received. We'll confirm shortly.`
+      const smsBody = hasLinkedForms
+        ? `Hi ${name}, your booking request for ${bookingType.name} on ${format(startDate, "MMM d, yyyy 'at' h:mm a")} has been received. Please complete the required form here: ${formsUrl} We'll confirm shortly.`
+        : `Hi ${name}, your booking request for ${bookingType.name} on ${format(startDate, "MMM d, yyyy 'at' h:mm a")} has been received. We'll confirm shortly.`
 
       const smsResult = await sendMessage({
         workspaceId: workspace.id,
@@ -145,6 +151,7 @@ export async function POST(request: Request) {
         customerPhone: phone,
         bookingType: bookingType.name,
         startAt: startDate.toISOString(),
+        formUrl: formsUrl || "",
       },
     })
 

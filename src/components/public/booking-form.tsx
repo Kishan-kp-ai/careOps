@@ -38,7 +38,6 @@ interface BookingType {
   name: string
   description: string | null
   durationMin: number
-  location: string | null
   availability: any
 }
 
@@ -47,6 +46,7 @@ interface BookingFormProps {
     id: string
     name: string
     slug: string
+    address: string | null
   }
   bookingTypes: BookingType[]
 }
@@ -157,10 +157,10 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
               {format(startAt, "h:mm a")} &middot; {selectedType.durationMin}{" "}
               min
             </div>
-            {selectedType.location && (
+            {workspace.address && (
               <div className="flex items-center gap-2 text-sm text-gray-900">
                 <MapPinIcon className="size-4 text-gray-500" />
-                {selectedType.location}
+                {workspace.address}
               </div>
             )}
             <div className="text-sm font-medium text-gray-900">
@@ -241,10 +241,10 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
                       <ClockIcon className="size-3" />
                       {type.durationMin} min
                     </Badge>
-                    {type.location && (
+                    {workspace.address && (
                       <Badge variant="secondary">
                         <MapPinIcon className="size-3" />
-                        {type.location}
+                        {workspace.address}
                       </Badge>
                     )}
                   </div>

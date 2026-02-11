@@ -72,7 +72,7 @@ export async function POST(
               type: "send_email",
               to: "{{customerEmail}}",
               subject: "Booking Confirmation",
-              body: "Hi {{customerName}}, your booking for {{bookingType}} on {{startAt}} has been received. We will confirm it shortly.",
+              body: "Hi {{customerName}}, your booking for {{bookingType}} on {{startAt}} has been received. We will confirm it shortly.\n\n{{formUrl}}",
             },
           ],
         },

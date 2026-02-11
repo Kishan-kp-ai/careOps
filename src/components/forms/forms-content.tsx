@@ -7,7 +7,13 @@ import {
   XCircle,
   ChevronDownIcon,
   ChevronRightIcon,
+  ClockIcon,
+  SendIcon,
+  Loader2Icon,
+  UserIcon,
 } from "lucide-react"
+import { toast } from "sonner"
+import { formatDistanceToNow } from "date-fns"
 import {
   Card,
   CardContent,
@@ -35,6 +41,18 @@ interface FormDefinition {
   isActive: boolean
 }
 
+interface PendingAssignment {
+  id: string
+  sentAt: string | null
+  form: { name: string }
+  booking: {
+    publicToken: string
+    startAt: string
+    customer: { name: string; email: string | null; phone: string | null }
+    bookingType: { name: string }
+  }
+}
+
 interface FormsContentProps {
   workspaceId: string
 }
@@ -54,15 +72,19 @@ const FIELD_TYPE_LABELS: Record<string, string> = {
 
 export function FormsContent({ workspaceId }: FormsContentProps) {
   const [forms, setForms] = useState<FormDefinition[]>([])
+  const [pending, setPending] = useState<PendingAssignment[]>([])
   const [loading, setLoading] = useState(true)
   const [expandedForms, setExpandedForms] = useState<Set<string>>(new Set())
+  const [resending, setResending] = useState<Set<string>>(new Set())
 
   const fetchForms = useCallback(async () => {
     try {
-      const res = await fetch(`/api/workspaces/${workspaceId}/forms`)
-      if (res.ok) {
-        setForms(await res.json())
-      }
+      const [formsRes, pendingRes] = await Promise.all([
+        fetch(`/api/workspaces/${workspaceId}/forms`),
+        fetch(`/api/workspaces/${workspaceId}/forms/pending`),
+      ])
+      if (formsRes.ok) setForms(await formsRes.json())
+      if (pendingRes.ok) setPending(await pendingRes.json())
     } finally {
       setLoading(false)
     }
@@ -71,6 +93,34 @@ export function FormsContent({ workspaceId }: FormsContentProps) {
   useEffect(() => {
     fetchForms()
   }, [fetchForms])
+
+  const handleResend = async (assignmentId: string) => {
+    setResending((prev) => new Set(prev).add(assignmentId))
+    try {
+      const res = await fetch(
+        `/api/workspaces/${workspaceId}/forms/pending/${assignmentId}/resend`,
+        { method: "POST" }
+      )
+      if (res.ok) {
+        toast.success("Form link resent successfully")
+        setPending((prev) =>
+          prev.map((p) =>
+            p.id === assignmentId ? { ...p, sentAt: new Date().toISOString() } : p
+          )
+        )
+      } else {
+        toast.error("Failed to resend form link")
+      }
+    } catch {
+      toast.error("Failed to resend form link")
+    } finally {
+      setResending((prev) => {
+        const next = new Set(prev)
+        next.delete(assignmentId)
+        return next
+      })
+    }
+  }
 
   const toggleExpanded = (formId: string) => {
     setExpandedForms((prev) => {
@@ -96,6 +146,63 @@ export function FormsContent({ workspaceId }: FormsContentProps) {
   return (
     <div className="space-y-6">
       <Header title="Forms" description="Manage form templates" />
+
+      {pending.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ClockIcon className="size-5 text-amber-500" />
+              Pending Forms
+              <Badge variant="outline" className="border-amber-500 text-amber-600">
+                {pending.length}
+              </Badge>
+            </CardTitle>
+            <CardDescription>
+              Forms that customers haven&apos;t submitted yet
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="divide-y">
+              {pending.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <UserIcon className="size-4 shrink-0 text-muted-foreground" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {item.booking.customer.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {item.form.name} · {item.booking.bookingType.name}
+                      </p>
+                      {item.sentAt && (
+                        <p className="text-xs text-muted-foreground">
+                          Sent {formatDistanceToNow(new Date(item.sentAt), { addSuffix: true })}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={resending.has(item.id)}
+                    onClick={() => handleResend(item.id)}
+                  >
+                    {resending.has(item.id) ? (
+                      <Loader2Icon className="mr-1 size-3 animate-spin" />
+                    ) : (
+                      <SendIcon className="mr-1 size-3" />
+                    )}
+                    Resend
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {forms.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">

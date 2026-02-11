@@ -16,6 +16,7 @@ export default async function PublicBookingPage({
       name: true,
       slug: true,
       status: true,
+      address: true,
       bookingTypes: {
         where: { isActive: true },
         select: {
@@ -46,7 +47,7 @@ export default async function PublicBookingPage({
 
   return (
     <BookingForm
-      workspace={{ id: workspace.id, name: workspace.name, slug: workspace.slug }}
+      workspace={{ id: workspace.id, name: workspace.name, slug: workspace.slug, address: workspace.address }}
       bookingTypes={workspace.bookingTypes}
     />
   )

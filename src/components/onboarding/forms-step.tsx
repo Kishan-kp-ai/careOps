@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Trash2Icon, PlusIcon } from "lucide-react"
+import { Trash2Icon, PlusIcon, SparklesIcon, Loader2Icon } from "lucide-react"
 
 interface FormField {
   key: string
@@ -27,6 +27,12 @@ interface FormField {
   type: "text" | "textarea" | "select" | "checkbox"
   required: boolean
   options?: string[]
+}
+
+interface AISuggestion {
+  name: string
+  description: string
+  fields: FormField[]
 }
 
 interface FormsStepProps {
@@ -46,6 +52,37 @@ export function FormsStep({ workspaceId, onComplete }: FormsStepProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [saved, setSaved] = useState(false)
+
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiError, setAiError] = useState("")
+
+  async function handleAiSuggest() {
+    setAiLoading(true)
+    setAiError("")
+
+    try {
+      const res = await fetch(`/api/workspaces/${workspaceId}/ai-suggest`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ step: "forms" }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Failed to generate suggestions")
+      }
+
+      const data = await res.json()
+      const suggestion = data.suggestions as AISuggestion
+      setFormName(suggestion.name)
+      setFormDescription(suggestion.description)
+      setFields(suggestion.fields)
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Something went wrong")
+    } finally {
+      setAiLoading(false)
+    }
+  }
 
   function handleAddOption() {
     if (optionInput.trim()) {
@@ -127,6 +164,25 @@ export function FormsStep({ workspaceId, onComplete }: FormsStepProps) {
       <CardContent className="space-y-6">
         {!saved ? (
           <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAiSuggest}
+              disabled={aiLoading}
+              className="w-full gap-2"
+            >
+              {aiLoading ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <SparklesIcon className="size-4" />
+              )}
+              {aiLoading ? "Generating form..." : "Generate with AI"}
+            </Button>
+
+            {aiError && (
+              <p className="text-destructive text-sm">{aiError}</p>
+            )}
+
             <div className="space-y-4 rounded-lg border p-4">
               <div className="space-y-2">
                 <Label htmlFor="form-name">Form Name</Label>
