@@ -73,9 +73,15 @@ export default function PublicFormsPage() {
   }, [publicToken])
 
   function getFields(assignment: FormAssignment): FormField[] {
-    const fields = assignment.form.fields
-    if (typeof fields === "string") return JSON.parse(fields)
-    return fields as FormField[]
+    let fields = assignment.form.fields
+    if (typeof fields === "string") fields = JSON.parse(fields)
+    return (fields as unknown as Array<Record<string, unknown>>).map((f) => ({
+      name: (f.name || f.key || "") as string,
+      label: (f.label || "") as string,
+      type: (f.type || "text") as FormField["type"],
+      required: (f.required || false) as boolean,
+      options: f.options as string[] | undefined,
+    }))
   }
 
   function updateField(assignmentId: string, fieldName: string, value: unknown) {

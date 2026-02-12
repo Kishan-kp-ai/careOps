@@ -94,7 +94,7 @@ export function BookingsContent({ workspaceId, workspaceSlug }: BookingsContentP
   }
 
   const copyPublicLink = () => {
-    const url = `${window.location.origin}/book/${workspaceSlug}`
+    const url = `${window.location.origin}/b/${workspaceSlug}`
     navigator.clipboard.writeText(url)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)

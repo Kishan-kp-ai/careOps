@@ -37,6 +37,27 @@ export async function POST(
       data: { status: "ACTIVE" },
     })
 
+    // Auto-link forms to booking types that have no linked forms
+    const forms = await db.formDefinition.findMany({
+      where: { workspaceId, isActive: true },
+      select: { id: true },
+    })
+
+    if (forms.length > 0) {
+      const formIds = forms.map((f) => f.id)
+      const unlinkedBookingTypes = await db.bookingType.findMany({
+        where: { workspaceId, isActive: true, linkedFormIds: { isEmpty: true } },
+        select: { id: true },
+      })
+
+      for (const bt of unlinkedBookingTypes) {
+        await db.bookingType.update({
+          where: { id: bt.id },
+          data: { linkedFormIds: formIds },
+        })
+      }
+    }
+
     const existingRules = await db.automationRule.count({ where: { workspaceId } })
 
     if (existingRules > 0) {

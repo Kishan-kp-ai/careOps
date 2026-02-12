@@ -128,7 +128,7 @@ export function ActivateStep({ workspaceId, onActivate }: ActivateStepProps) {
             <div className="rounded-lg border p-4 space-y-1">
               <p className="text-sm font-medium">Public Booking URL</p>
               <p className="text-muted-foreground text-sm break-all">
-                {typeof window !== "undefined" ? window.location.origin : ""}/book/
+                {typeof window !== "undefined" ? window.location.origin : ""}/b/
                 {details.slug}
               </p>
             </div>
