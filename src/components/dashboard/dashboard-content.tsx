@@ -152,10 +152,7 @@ export function DashboardContent({ workspaceId, slug }: DashboardContentProps) {
               value={totalBookings > 0 ? 100 - completionRate : 0}
               className="h-2 [&>[data-slot=progress-indicator]]:bg-red-500"
             />
-            <p className="text-xs text-muted-foreground">
-              {completionRate}% completion rate across {totalBookings} total
-              bookings
-            </p>
+
           </CardContent>
         </Card>
 

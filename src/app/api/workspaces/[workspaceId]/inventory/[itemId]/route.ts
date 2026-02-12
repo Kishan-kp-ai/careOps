@@ -36,7 +36,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Item not found" }, { status: 404 })
     }
 
-    const newQuantity = item.quantity + delta
+    const effectiveDelta = type === "consume" ? -Math.abs(delta) : Math.abs(delta)
+    const newQuantity = Math.max(0, item.quantity + effectiveDelta)
 
     const [updatedItem] = await db.$transaction([
       db.inventoryItem.update({
@@ -48,7 +49,7 @@ export async function PATCH(
           workspaceId,
           itemId,
           type,
-          delta,
+          delta: effectiveDelta,
           note,
         },
       }),

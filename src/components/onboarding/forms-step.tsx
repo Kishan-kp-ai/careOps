@@ -356,11 +356,7 @@ export function FormsStep({ workspaceId, onComplete }: FormsStepProps) {
           </div>
         )}
 
-        {!saved && (
-          <Button variant="ghost" onClick={onComplete} className="w-full">
-            Skip this step
-          </Button>
-        )}
+
       </CardContent>
     </Card>
   )

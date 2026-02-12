@@ -17,7 +17,7 @@ const STEPS = [
   { label: "Workspace", required: true },
   { label: "Channels", required: true },
   { label: "Booking Types", required: true },
-  { label: "Forms", required: false },
+  { label: "Forms", required: true },
   { label: "Inventory", required: false },
   { label: "Staff", required: false },
   { label: "Activate", required: true },

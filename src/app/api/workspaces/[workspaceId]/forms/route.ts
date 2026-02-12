@@ -72,3 +72,67 @@ export async function POST(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ workspaceId: string }> }
+) {
+  try {
+    const { workspaceId } = await params
+    await apiRequireOwner(workspaceId)
+
+    const body = await request.json()
+    const { id, name, description, fields } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Form id is required" },
+        { status: 400 }
+      )
+    }
+
+    if (!name || !fields || !Array.isArray(fields)) {
+      return NextResponse.json(
+        { error: "Name and fields array are required" },
+        { status: 400 }
+      )
+    }
+
+    for (const field of fields) {
+      if (!field.key || !field.label || !field.type) {
+        return NextResponse.json(
+          { error: "Each field must have key, label, and type" },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Ensure the form belongs to this workspace
+    const existing = await db.formDefinition.findFirst({
+      where: { id, workspaceId },
+    })
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Form not found" },
+        { status: 404 }
+      )
+    }
+
+    const form = await db.formDefinition.update({
+      where: { id },
+      data: {
+        name,
+        description,
+        fields,
+      },
+    })
+
+    return NextResponse.json(form)
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}

@@ -43,7 +43,10 @@ export function Sidebar({ workspace, userRole }: SidebarProps) {
   return (
     <aside className="flex h-full w-64 flex-col bg-slate-900 text-white">
       <div className="border-b border-slate-700 px-4 py-5">
-        <h2 className="truncate text-lg font-semibold">{workspace.name}</h2>
+        <div className="flex items-center gap-2.5">
+          <img src="/logo.png" alt="CareOps" width={32} height={32} />
+          <h2 className="truncate text-lg font-semibold"><span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent">Care</span><span className="text-white">Ops</span></h2>
+        </div>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
@@ -95,7 +98,7 @@ export function Sidebar({ workspace, userRole }: SidebarProps) {
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-slate-300 hover:bg-slate-800 hover:text-white"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => signOut({ callbackUrl: "/" })}
         >
           <LogOut className="size-5 shrink-0" />
           Sign Out

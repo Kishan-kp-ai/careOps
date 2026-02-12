@@ -268,17 +268,19 @@ export async function POST(
     const systemPrompt = PROMPTS[step as keyof typeof PROMPTS]
     const userPrompt = `Business name: "${workspace.name}". Generate suggestions.`
 
-    try {
-      const result = await gemini.generateContent([systemPrompt, userPrompt])
-      const text = result.response.text()
+    if (process.env.GEMINI_API_KEY) {
+      try {
+        const result = await gemini.generateContent([systemPrompt, userPrompt])
+        const text = result.response.text()
 
-      const jsonMatch = text.match(/[\[{][\s\S]*[\]}]/)
-      if (jsonMatch) {
-        const suggestions = JSON.parse(jsonMatch[0])
-        return NextResponse.json({ suggestions })
+        const jsonMatch = text.match(/[\[{][\s\S]*[\]}]/)
+        if (jsonMatch) {
+          const suggestions = JSON.parse(jsonMatch[0])
+          return NextResponse.json({ suggestions })
+        }
+      } catch {
+        // Gemini failed (quota/network), silently fall through to fallbacks
       }
-    } catch (err) {
-      console.warn("AI suggest failed, using fallbacks:", err instanceof Error ? err.message : err)
     }
 
     return NextResponse.json({ suggestions: getFallbacks(step, workspace.name) })
