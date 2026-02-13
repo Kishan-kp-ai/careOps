@@ -142,10 +142,20 @@ export async function POST(request: Request) {
     const hasLinkedForms = bookingType.linkedFormIds.length > 0
     const formsUrl = hasLinkedForms ? `${baseUrl}/forms/${publicToken}` : null
 
+    const dateStr = startDate.toLocaleString("en-US", {
+      timeZone: tz,
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+
     if (phone) {
       const smsBody = hasLinkedForms
-        ? `Hi ${name}, your booking request for ${bookingType.name} on ${format(startDate, "MMM d, yyyy 'at' h:mm a")} has been received. Please complete the required form here: ${formsUrl} We'll confirm shortly.`
-        : `Hi ${name}, your booking request for ${bookingType.name} on ${format(startDate, "MMM d, yyyy 'at' h:mm a")} has been received. We'll confirm shortly.`
+        ? `Hi ${name}, your booking request for ${bookingType.name} on ${dateStr} has been received. Please complete the required form here: ${formsUrl} We'll confirm shortly.`
+        : `Hi ${name}, your booking request for ${bookingType.name} on ${dateStr} has been received. We'll confirm shortly.`
 
       const smsResult = await sendMessage({
         workspaceId: workspace.id,
@@ -182,7 +192,7 @@ export async function POST(request: Request) {
         customerEmail: email,
         customerPhone: phone,
         bookingType: bookingType.name,
-        startAt: startDate.toISOString(),
+        startAt: dateStr,
         formUrl: formsUrl || "",
       },
     })

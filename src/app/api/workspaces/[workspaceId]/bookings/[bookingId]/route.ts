@@ -83,11 +83,26 @@ export async function PATCH(
       include: { bookingType: true, customer: true },
     })
 
+    const workspace = await db.workspace.findUnique({
+      where: { id: workspaceId },
+      select: { timezone: true },
+    })
+    const tz = workspace?.timezone || "UTC"
+
+    const dateStr = new Date(booking.startAt).toLocaleString("en-US", {
+      timeZone: tz,
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+
     if (
       (status === "CONFIRMED" || status === "CANCELLED") &&
       booking.customer.phone
     ) {
-      const dateStr = format(booking.startAt, "MMM d, yyyy 'at' h:mm a")
       const smsBody =
         status === "CONFIRMED"
           ? `Hi ${booking.customer.name}, your booking for ${booking.bookingType.name} on ${dateStr} has been confirmed. See you then!`
@@ -138,7 +153,7 @@ export async function PATCH(
           customerEmail: booking.customer.email,
           customerPhone: booking.customer.phone,
           bookingType: booking.bookingType.name,
-          startAt: booking.startAt.toISOString(),
+          startAt: dateStr,
         },
       })
     }
