@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { format, startOfDay, endOfDay } from "date-fns"
+
+function getTimezoneOffsetMs(tz: string, date: Date): number {
+  const utcStr = date.toLocaleString("en-US", { timeZone: "UTC" })
+  const tzStr = date.toLocaleString("en-US", { timeZone: tz })
+  return new Date(tzStr).getTime() - new Date(utcStr).getTime()
+}
 
 export async function GET(request: Request) {
   try {
@@ -38,7 +43,18 @@ export async function GET(request: Request) {
       )
     }
 
+    const tz = workspace.timezone || "UTC"
     const targetDate = new Date(date)
+
+    // Get the date string in workspace timezone (YYYY-MM-DD)
+    const dayStr = targetDate.toLocaleDateString("en-CA", { timeZone: tz })
+
+    // Compute day boundaries in UTC using the workspace timezone
+    const dayStartLocal = new Date(`${dayStr}T00:00:00Z`)
+    const dayEndLocal = new Date(`${dayStr}T23:59:59.999Z`)
+    const offsetMs = getTimezoneOffsetMs(tz, dayStartLocal)
+    const dayStartUtc = new Date(dayStartLocal.getTime() - offsetMs)
+    const dayEndUtc = new Date(dayEndLocal.getTime() - offsetMs)
 
     const bookings = await db.booking.findMany({
       where: {
@@ -46,16 +62,22 @@ export async function GET(request: Request) {
         bookingTypeId,
         NOT: { status: "CANCELLED" },
         startAt: {
-          gte: startOfDay(targetDate),
-          lte: endOfDay(targetDate),
+          gte: dayStartUtc,
+          lte: dayEndUtc,
         },
       },
       orderBy: { startAt: "asc" },
     })
 
-    const bookedSlots = bookings.map((booking) =>
-      format(booking.startAt, "HH:mm")
-    )
+    // Format startAt in workspace timezone (not server timezone)
+    const bookedSlots = bookings.map((booking) => {
+      return new Date(booking.startAt).toLocaleTimeString("en-GB", {
+        timeZone: tz,
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+    })
 
     return NextResponse.json({ bookedSlots })
   } catch (error) {
