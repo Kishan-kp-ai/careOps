@@ -5,14 +5,26 @@ import { sendMessage } from "@/lib/channels"
 import { v4 as uuidv4 } from "uuid"
 import { addMinutes, format } from "date-fns"
 
+function getTimezoneOffsetMs(tz: string, date: Date): number {
+  const utcStr = date.toLocaleString("en-US", { timeZone: "UTC" })
+  const tzStr = date.toLocaleString("en-US", { timeZone: tz })
+  return new Date(tzStr).getTime() - new Date(utcStr).getTime()
+}
+
+function toUTC(dateStr: string, timeStr: string, tz: string): Date {
+  const utcDate = new Date(`${dateStr}T${timeStr}:00Z`)
+  const offsetMs = getTimezoneOffsetMs(tz, utcDate)
+  return new Date(utcDate.getTime() - offsetMs)
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { workspaceSlug, bookingTypeId, startAt, name, email, phone, notes } = body
+    const { workspaceSlug, bookingTypeId, date, time, name, email, phone, notes } = body
 
-    if (!workspaceSlug || !bookingTypeId || !startAt || !name || !email) {
+    if (!workspaceSlug || !bookingTypeId || !date || !time || !name || !email) {
       return NextResponse.json(
-        { error: "workspaceSlug, bookingTypeId, startAt, name, and email are required" },
+        { error: "workspaceSlug, bookingTypeId, date, time, name, and email are required" },
         { status: 400 }
       )
     }
@@ -39,7 +51,9 @@ export async function POST(request: Request) {
       )
     }
 
-    const startDate = new Date(startAt)
+    // Convert date + time to UTC using workspace timezone
+    const tz = workspace.timezone || "UTC"
+    const startDate = toUTC(date, time, tz)
     const endDate = addMinutes(startDate, bookingType.durationMin)
 
     // Check for overlapping bookings

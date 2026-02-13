@@ -7,6 +7,12 @@ function getTimezoneOffsetMs(tz: string, date: Date): number {
   return new Date(tzStr).getTime() - new Date(utcStr).getTime()
 }
 
+function toUTC(dateStr: string, timeStr: string, tz: string): Date {
+  const utcDate = new Date(`${dateStr}T${timeStr}:00Z`)
+  const offsetMs = getTimezoneOffsetMs(tz, utcDate)
+  return new Date(utcDate.getTime() - offsetMs)
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -44,17 +50,13 @@ export async function GET(request: Request) {
     }
 
     const tz = workspace.timezone || "UTC"
-    const targetDate = new Date(date)
 
-    // Get the date string in workspace timezone (YYYY-MM-DD)
-    const dayStr = targetDate.toLocaleDateString("en-CA", { timeZone: tz })
+    // date param is now "YYYY-MM-DD" string directly
+    const dayStr = date
 
     // Compute day boundaries in UTC using the workspace timezone
-    const dayStartLocal = new Date(`${dayStr}T00:00:00Z`)
-    const dayEndLocal = new Date(`${dayStr}T23:59:59.999Z`)
-    const offsetMs = getTimezoneOffsetMs(tz, dayStartLocal)
-    const dayStartUtc = new Date(dayStartLocal.getTime() - offsetMs)
-    const dayEndUtc = new Date(dayEndLocal.getTime() - offsetMs)
+    const dayStartUtc = toUTC(dayStr, "00:00", tz)
+    const dayEndUtc = toUTC(dayStr, "23:59", tz)
 
     const bookings = await db.booking.findMany({
       where: {

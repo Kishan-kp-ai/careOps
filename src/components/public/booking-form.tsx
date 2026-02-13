@@ -104,7 +104,7 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
         const params = new URLSearchParams({
           workspaceSlug: workspace.slug,
           bookingTypeId: selectedType!.id,
-          date: selectedDate!.toISOString(),
+          date: format(selectedDate!, "yyyy-MM-dd"),
         })
         const res = await fetch(`/api/public/booking/slots?${params}`)
         if (res.ok) {
@@ -126,10 +126,6 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
     setSubmitting(true)
     setError("")
 
-    const [hours, minutes] = selectedTime.split(":").map(Number)
-    const startAt = new Date(selectedDate)
-    startAt.setHours(hours, minutes, 0, 0)
-
     try {
       const res = await fetch("/api/public/booking", {
         method: "POST",
@@ -137,7 +133,8 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
         body: JSON.stringify({
           workspaceSlug: workspace.slug,
           bookingTypeId: selectedType.id,
-          startAt: startAt.toISOString(),
+          date: format(selectedDate, "yyyy-MM-dd"),
+          time: selectedTime,
           name,
           email,
           phone: phone || undefined,
