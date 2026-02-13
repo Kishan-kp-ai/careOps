@@ -60,8 +60,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-gray-900 px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
+      <header className="bg-gray-900 px-20 py-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src="/logo.png" alt="CareOps" width={32} height={32} />
             <h1 className="text-xl font-bold tracking-tight">
@@ -86,26 +86,29 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="px-6 pb-8 pt-20 text-center lg:pt-28">
-        <h2 className="mx-auto max-w-4xl text-5xl font-bold leading-[1.1] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
-          Manage. Automate.
-          <br />
-          Grow your business.
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-gray-500">
-          CareOps is the all-in-one platform where better, faster operations
-          happen.
-        </p>
-        <div className="mt-8">
-          <Button
-            asChild
-            className="rounded-lg bg-gray-900 px-7 py-6 text-base font-medium text-white hover:bg-gray-800"
-          >
-            <Link href="/register">
-              Get CareOps free
-              <ArrowRight className="ml-2 size-4" />
-            </Link>
-          </Button>
+      <section className="relative bg-cover bg-center px-6 pb-20 pt-28 text-center lg:pt-40 lg:pb-28" style={{ backgroundImage: "url('/hero-bg.jpg')" }}>
+        <div className="absolute inset-0 bg-white/30" />
+        <div className="relative">
+          <h2 className="mx-auto max-w-4xl text-5xl font-bold leading-[1.1] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
+            Manage. Automate.
+            <br />
+            Grow your business.
+          </h2>
+          <p className="mx-auto mt-6 max-w-xl text-lg font-medium text-gray-800">
+            CareOps is the all-in-one platform where better, faster operations
+            happen.
+          </p>
+          <div className="mt-8">
+            <Button
+              asChild
+              className="rounded-lg bg-gray-900 px-7 py-6 text-base font-medium text-white hover:bg-gray-800"
+            >
+              <Link href="/register">
+                Get CareOps free
+                <ArrowRight className="ml-2 size-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -145,15 +148,15 @@ export default function LandingPage() {
 
 
       {/* Steps */}
-      <section className="border-t border-gray-100 px-6 py-24">
+      <section
+        className="border-t border-gray-100 px-6 py-24 bg-cover bg-center"
+        style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('/steps-bg.jpg')" }}
+      >
         <div className="mx-auto max-w-xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-500">
-            How it works
-          </p>
-          <h3 className="mt-3 text-3xl font-bold tracking-tight text-gray-900">
+          <h3 className="text-3xl font-bold tracking-tight text-gray-900">
             Get started in minutes
           </h3>
-          <p className="mt-3 text-gray-500">
+          <p className="mt-3 font-semibold text-gray-900">
             Our guided onboarding walks you through every step.
           </p>
         </div>
@@ -179,19 +182,19 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="px-6 py-24">
+      <section className="bg-gray-900 px-6 py-24">
         <div className="mx-auto max-w-3xl text-center">
-          <h3 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+          <h3 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
             Start using CareOps today
           </h3>
-          <p className="mx-auto mt-4 max-w-lg text-gray-500">
+          <p className="mx-auto mt-4 max-w-lg text-gray-400">
             Join businesses that have simplified their workflow. Set up in
             minutes, not hours.
           </p>
           <div className="mt-8">
             <Button
               asChild
-              className="rounded-lg bg-gray-900 px-7 py-6 text-base font-medium text-white hover:bg-gray-800"
+              className="rounded-lg bg-white px-7 py-6 text-base font-medium text-gray-900 hover:bg-gray-100"
             >
               <Link href="/register">
                 Get CareOps free
@@ -203,7 +206,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 px-6 py-8">
+      <footer className="bg-gray-900 px-6 py-8">
         <div className="mx-auto max-w-6xl text-center text-sm text-gray-400">
           CareOps — Unified Operations Platform
         </div>

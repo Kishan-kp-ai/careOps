@@ -13,17 +13,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    const finalSlug = slug || generateSlug(name)
-
-    const existing = await db.workspace.findUnique({
-      where: { slug: finalSlug },
+    // Check if this owner already has a workspace with the same name
+    const duplicateOwned = await db.workspace.findFirst({
+      where: {
+        name,
+        members: {
+          some: { userId: user.id, role: "OWNER" },
+        },
+      },
     })
 
-    if (existing) {
+    if (duplicateOwned) {
       return NextResponse.json(
-        { error: "A workspace with this slug already exists" },
+        { error: `You already have a workspace named "${name}"` },
         { status: 409 }
       )
+    }
+
+    // Auto-increment slug if taken by a different owner
+    let finalSlug = slug || generateSlug(name)
+    let suffix = 2
+    while (await db.workspace.findUnique({ where: { slug: finalSlug } })) {
+      finalSlug = `${slug || generateSlug(name)}-${suffix}`
+      suffix++
     }
 
     const workspace = await db.workspace.create({

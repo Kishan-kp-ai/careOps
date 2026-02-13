@@ -42,6 +42,24 @@ export async function POST(request: Request) {
     const startDate = new Date(startAt)
     const endDate = addMinutes(startDate, bookingType.durationMin)
 
+    // Check for overlapping bookings
+    const overlapping = await db.booking.findFirst({
+      where: {
+        workspaceId: workspace.id,
+        bookingTypeId,
+        NOT: { status: "CANCELLED" },
+        startAt: { lt: endDate },
+        endAt: { gt: startDate },
+      },
+    })
+
+    if (overlapping) {
+      return NextResponse.json(
+        { error: "This time slot is already booked. Please choose another time." },
+        { status: 409 }
+      )
+    }
+
     let customer = await db.customer.findFirst({
       where: { workspaceId: workspace.id, email },
     })

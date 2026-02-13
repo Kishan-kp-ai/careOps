@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import Link from "next/link"
 import {
   ArrowLeftIcon,
@@ -80,6 +80,7 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
+  const [bookedSlots, setBookedSlots] = useState<string[]>([])
   const [bookingResult, setBookingResult] = useState<{
     formsUrl?: string
     publicToken?: string
@@ -91,6 +92,32 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
     if (!selectedType) return []
     return generateTimeSlots(selectedType.durationMin)
   }, [selectedType])
+
+  useEffect(() => {
+    if (!selectedType || !selectedDate) {
+      setBookedSlots([])
+      return
+    }
+
+    async function fetchBookedSlots() {
+      try {
+        const params = new URLSearchParams({
+          workspaceSlug: workspace.slug,
+          bookingTypeId: selectedType!.id,
+          date: selectedDate!.toISOString(),
+        })
+        const res = await fetch(`/api/public/booking/slots?${params}`)
+        if (res.ok) {
+          const data = await res.json()
+          setBookedSlots(data.bookedSlots || [])
+        }
+      } catch {
+        setBookedSlots([])
+      }
+    }
+
+    fetchBookedSlots()
+  }, [selectedType, selectedDate, workspace.slug])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -281,25 +308,30 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
                       {format(selectedDate, "EEEE, MMMM d")}
                     </p>
                     <div className="grid grid-cols-3 gap-2 sm:grid-cols-2 md:grid-cols-3">
-                      {timeSlots.map((slot) => (
-                        <Button
-                          key={slot}
-                          type="button"
-                          variant={
-                            selectedTime === slot ? "default" : "outline"
-                          }
-                          size="sm"
-                          onClick={() => setSelectedTime(slot)}
-                        >
-                          {format(
-                            setMinutes(
-                              setHours(new Date(), parseInt(slot.split(":")[0])),
-                              parseInt(slot.split(":")[1])
-                            ),
-                            "h:mm a"
-                          )}
-                        </Button>
-                      ))}
+                      {timeSlots.map((slot) => {
+                        const isBooked = bookedSlots.includes(slot)
+                        return (
+                          <Button
+                            key={slot}
+                            type="button"
+                            variant={
+                              selectedTime === slot ? "default" : isBooked ? "ghost" : "outline"
+                            }
+                            size="sm"
+                            onClick={() => setSelectedTime(slot)}
+                            disabled={isBooked}
+                            className={isBooked ? "line-through opacity-50" : ""}
+                          >
+                            {format(
+                              setMinutes(
+                                setHours(new Date(), parseInt(slot.split(":")[0])),
+                                parseInt(slot.split(":")[1])
+                              ),
+                              "h:mm a"
+                            )}
+                          </Button>
+                        )
+                      })}
                     </div>
                   </div>
                 )}

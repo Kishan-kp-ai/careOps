@@ -74,10 +74,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md bg-gray-900 border-gray-800">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">CareOps</CardTitle>
-        <CardDescription>Create your account</CardDescription>
+        <CardTitle className="flex items-center justify-center gap-2 text-2xl font-bold">
+          <img src="/logo.png" alt="CareOps" width={28} height={28} />
+          <span><span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent">Care</span><span className="text-white">Ops</span></span>
+        </CardTitle>
+        <CardDescription className="text-gray-400">Create your account</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
@@ -87,7 +90,7 @@ export default function RegisterPage() {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name" className="text-gray-300">Name</Label>
             <Input
               id="name"
               type="text"
@@ -95,10 +98,11 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-gray-300">Email</Label>
             <Input
               id="email"
               type="email"
@@ -106,10 +110,11 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-gray-300">Password</Label>
             <Input
               id="password"
               type="password"
@@ -117,10 +122,11 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword" className="text-gray-300">Confirm Password</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -128,16 +134,17 @@ export default function RegisterPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              className="border-gray-700 bg-gray-800 text-white placeholder:text-gray-500"
             />
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-white text-gray-900 hover:bg-gray-100" disabled={isLoading}>
             {isLoading ? "Creating account..." : "Create Account"}
           </Button>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-400">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link href="/login" className="text-teal-400 hover:underline">
               Sign in
             </Link>
           </p>

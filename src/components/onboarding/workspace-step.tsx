@@ -51,6 +51,7 @@ export function WorkspaceStep({ onComplete }: WorkspaceStepProps) {
   const [contactEmail, setContactEmail] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [slugNotice, setSlugNotice] = useState("")
 
   function handleNameChange(value: string) {
     setName(value)
@@ -61,6 +62,7 @@ export function WorkspaceStep({ onComplete }: WorkspaceStepProps) {
     e.preventDefault()
     setLoading(true)
     setError("")
+    setSlugNotice("")
 
     try {
       const res = await fetch("/api/workspaces", {
@@ -75,6 +77,13 @@ export function WorkspaceStep({ onComplete }: WorkspaceStepProps) {
       }
 
       const data = await res.json()
+
+      if (data.slug !== slug) {
+        setSlugNotice(
+          `Slug "${slug}" was taken. Your workspace was created with slug "${data.slug}".`
+        )
+      }
+
       onComplete(data.id, data.slug)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
@@ -161,6 +170,10 @@ export function WorkspaceStep({ onComplete }: WorkspaceStepProps) {
 
           {error && (
             <p className="text-destructive text-sm">{error}</p>
+          )}
+
+          {slugNotice && (
+            <p className="text-sm text-amber-600">{slugNotice}</p>
           )}
 
           <Button type="submit" disabled={!isValid || loading} className="w-full">
