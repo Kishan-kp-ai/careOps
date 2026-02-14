@@ -51,7 +51,7 @@ export function StaffStep({ workspaceId, onComplete }: StaffStepProps) {
       }
 
       const data = await res.json()
-      setStaff((prev) => [...prev, data])
+      setStaff((prev) => [...prev, { id: data.id, name: data.user?.name || name, email: data.user?.email || email }])
       setName("")
       setEmail("")
     } catch (err) {

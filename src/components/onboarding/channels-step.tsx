@@ -23,9 +23,7 @@ interface ChannelsStepProps {
 export function ChannelsStep({ workspaceId, onComplete }: ChannelsStepProps) {
   const searchParams = useSearchParams()
   const [emailEnabled, setEmailEnabled] = useState(false)
-  const [smsEnabled, setSmsEnabled] = useState(false)
   const [fromAddress, setFromAddress] = useState("")
-  const [fromNumber, setFromNumber] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [gmailConnected, setGmailConnected] = useState(
@@ -57,11 +55,10 @@ export function ChannelsStep({ workspaceId, onComplete }: ChannelsStepProps) {
     }
   }, [searchParams, workspaceId])
 
-  const hasChannel = emailEnabled || smsEnabled
+  const hasChannel = emailEnabled
   const isValid =
     hasChannel &&
-    (!emailEnabled || gmailConnected || fromAddress.trim()) &&
-    (!smsEnabled || fromNumber.trim())
+    (!emailEnabled || gmailConnected || fromAddress.trim())
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -73,10 +70,6 @@ export function ChannelsStep({ workspaceId, onComplete }: ChannelsStepProps) {
       if (emailEnabled && !gmailConnected) {
         channels.push({ type: "EMAIL", fromAddress })
       }
-      if (smsEnabled) {
-        channels.push({ type: "SMS", fromNumber })
-      }
-
       if (channels.length > 0) {
         const res = await fetch(`/api/workspaces/${workspaceId}/channels`, {
           method: "POST",
@@ -189,40 +182,6 @@ export function ChannelsStep({ workspaceId, onComplete }: ChannelsStepProps) {
               </div>
             )}
           </div>
-
-          <div className="space-y-4 rounded-lg border p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="sms-toggle" className="text-base">
-                  SMS
-                </Label>
-                <p className="text-muted-foreground text-sm">
-                  Send booking reminders and updates via SMS
-                </p>
-              </div>
-              <Switch
-                id="sms-toggle"
-                checked={smsEnabled}
-                onCheckedChange={setSmsEnabled}
-              />
-            </div>
-            {smsEnabled && (
-              <div className="space-y-2">
-                <Label htmlFor="fromNumber">From Number</Label>
-                <Input
-                  id="fromNumber"
-                  type="tel"
-                  placeholder="+1234567890"
-                  value={fromNumber}
-                  onChange={(e) => setFromNumber(e.target.value)}
-                />
-              </div>
-            )}
-          </div>
-
-          <p className="text-muted-foreground text-xs">
-            Note: Using mock providers for demo
-          </p>
 
           {!hasChannel && (
             <p className="text-destructive text-sm">

@@ -8,8 +8,7 @@ import {
   ClockIcon,
   MapPinIcon,
   CalendarIcon,
-  FileTextIcon,
-} from "lucide-react"
+  } from "lucide-react"
 import { format, setHours, setMinutes, addMinutes, isBefore } from "date-fns"
 import { Button } from "@/components/ui/button"
 import {
@@ -192,17 +191,6 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
             </div>
           </CardContent>
         </Card>
-
-        {bookingResult?.publicToken && bookingResult?.formsUrl && (
-          <Button asChild className="mt-2">
-            <Link
-              href={`/b/${workspace.slug}/booking/${bookingResult.publicToken}/forms`}
-            >
-              <FileTextIcon className="size-4" />
-              Fill Required Forms
-            </Link>
-          </Button>
-        )}
 
         <Button asChild variant="outline" className="mt-2">
           <Link href={`/b/${workspace.slug}`}>
