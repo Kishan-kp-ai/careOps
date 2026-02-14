@@ -73,7 +73,7 @@ export function BookingForm({ workspace, bookingTypes }: BookingFormProps) {
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
+  const [phone, setPhone] = useState("+91")
   const [notes, setNotes] = useState("")
 
   const [submitting, setSubmitting] = useState(false)
