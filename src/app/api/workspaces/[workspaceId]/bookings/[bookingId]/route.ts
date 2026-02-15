@@ -85,7 +85,7 @@ export async function PATCH(
 
     const workspace = await db.workspace.findUnique({
       where: { id: workspaceId },
-      select: { timezone: true },
+      select: { timezone: true, address: true },
     })
     const tz = workspace?.timezone || "UTC"
 
@@ -154,6 +154,7 @@ export async function PATCH(
           customerPhone: booking.customer.phone,
           bookingType: booking.bookingType.name,
           startAt: dateStr,
+          address: workspace?.address || "",
         },
       })
     }

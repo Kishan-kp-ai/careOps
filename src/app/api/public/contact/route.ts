@@ -82,6 +82,7 @@ export async function POST(request: Request) {
         customerName: name,
         customerEmail: email,
         customerPhone: phone,
+        bookingUrl: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/b/${workspaceSlug}/book`,
       },
     })
 
