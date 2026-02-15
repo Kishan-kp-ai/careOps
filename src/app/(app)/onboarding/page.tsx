@@ -16,7 +16,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 const STEPS = [
   { label: "Workspace", required: true },
   { label: "Channels", required: true },
-  { label: "Booking Types", required: true },
+  { label: "Services", required: true },
   { label: "Forms", required: true },
   { label: "Inventory", required: false },
   { label: "Staff", required: false },

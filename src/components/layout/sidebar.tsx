@@ -12,6 +12,7 @@ import {
   Users,
   Settings,
   LogOut,
+  Briefcase,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -26,6 +27,7 @@ const navItems = (slug: string) => [
   { href: `/w/${slug}/dashboard`, label: "Dashboard", icon: LayoutDashboard },
   { href: `/w/${slug}/inbox`, label: "Inbox", icon: MessageSquare },
   { href: `/w/${slug}/bookings`, label: "Bookings", icon: Calendar },
+  { href: `/w/${slug}/services`, label: "Services", icon: Briefcase },
   { href: `/w/${slug}/forms`, label: "Forms", icon: FileText },
   { href: `/w/${slug}/inventory`, label: "Inventory", icon: Package },
 ]

@@ -169,7 +169,7 @@ export function BookingTypesStep({ workspaceId, onComplete }: BookingTypesStepPr
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Booking Types</CardTitle>
+        <CardTitle>Services</CardTitle>
         <CardDescription>
           Define the types of appointments or services you offer.
           At least one is required to proceed.
@@ -291,7 +291,7 @@ export function BookingTypesStep({ workspaceId, onComplete }: BookingTypesStepPr
 
         {bookingTypes.length > 0 && (
           <div className="space-y-2">
-            <Label>Added Booking Types</Label>
+            <Label>Added Services</Label>
             {bookingTypes.map((bt) => (
               <div
                 key={bt.id}

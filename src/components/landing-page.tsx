@@ -49,7 +49,7 @@ const features = [
 const steps = [
   "Create your workspace",
   "Connect email & SMS",
-  "Set up booking types",
+  "Set up services",
   "Configure forms",
   "Add inventory items",
   "Invite your team",
