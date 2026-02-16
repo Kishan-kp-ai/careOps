@@ -44,7 +44,8 @@ export function WorkspaceStep({ onComplete }: WorkspaceStepProps) {
   const [error, setError] = useState("")
   const [listening, setListening] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null)
 
   function speak(text: string) {
     if (typeof window === "undefined" || !window.speechSynthesis) return
@@ -57,8 +58,8 @@ export function WorkspaceStep({ onComplete }: WorkspaceStepProps) {
   }
 
   function startListening() {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
     if (!SpeechRecognition) return
 
     const recognition = new SpeechRecognition()
@@ -66,7 +67,7 @@ export function WorkspaceStep({ onComplete }: WorkspaceStepProps) {
     recognition.interimResults = false
     recognition.continuous = false
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript
       setListening(false)
       sendMessage(transcript)

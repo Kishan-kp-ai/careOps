@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { logEvent } from "@/lib/events"
+import { sendMessage } from "@/lib/channels"
 
 export async function POST(request: Request) {
   try {
@@ -73,6 +74,34 @@ export async function POST(request: Request) {
       },
     })
 
+    if (phone) {
+      const smsBody = `Hi ${name}, thank you for contacting ${workspace.name}. We'll get back to you shortly. Book an appointment here: ${process.env.NEXTAUTH_URL || "http://localhost:3000"}/b/${workspaceSlug}/book`
+
+      const smsResult = await sendMessage({
+        workspaceId: workspace.id,
+        channel: "SMS",
+        to: phone,
+        body: smsBody,
+      })
+
+      if (smsResult.success) {
+        await db.message.create({
+          data: {
+            conversationId: conversation.id,
+            channel: "SMS",
+            direction: "OUTBOUND",
+            status: "SENT",
+            toAddress: phone,
+            body: smsBody,
+            providerRef: smsResult.providerRef,
+            sentAt: new Date(),
+          },
+        })
+      } else {
+        console.error("[Contact SMS] Failed to send:", smsResult.error)
+      }
+    }
+
     await logEvent({
       workspaceId: workspace.id,
       type: "LEAD_CREATED",
@@ -81,7 +110,8 @@ export async function POST(request: Request) {
       payload: {
         customerName: name,
         customerEmail: email,
-        customerPhone: phone,
+        customerPhone: phone || "",
+        workspaceName: workspace.name,
         bookingUrl: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/b/${workspaceSlug}/book`,
       },
     })

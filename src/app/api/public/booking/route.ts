@@ -191,6 +191,7 @@ export async function POST(request: Request) {
         customerName: name,
         customerEmail: email,
         customerPhone: phone,
+        workspaceName: workspace.name,
         bookingType: bookingType.name,
         startAt: dateStr,
         formUrl: formsUrl || "",

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { apiRequireOwner, ApiError } from "@/lib/auth-utils"
+import { Prisma } from "@/generated/prisma/client"
 
 export async function POST(
   _request: Request,
@@ -73,7 +74,7 @@ export async function POST(
           }
           return a
         })
-        await db.automationRule.update({ where: { id: rule.id }, data: { actions: updated } })
+        await db.automationRule.update({ where: { id: rule.id }, data: { actions: updated as unknown as Prisma.InputJsonValue } })
       }
 
       // Update existing BOOKING_CONFIRMED rules to include address
@@ -88,7 +89,7 @@ export async function POST(
           }
           return a
         })
-        await db.automationRule.update({ where: { id: rule.id }, data: { actions: updated } })
+        await db.automationRule.update({ where: { id: rule.id }, data: { actions: updated as unknown as Prisma.InputJsonValue } })
       }
 
       return NextResponse.json(workspace)
@@ -106,11 +107,6 @@ export async function POST(
               to: "{{customerEmail}}",
               subject: "Thank you for contacting us",
               body: "Hi {{customerName}}, thank you for reaching out. We will get back to you shortly.\n\nBook an appointment directly here: {{bookingUrl}}",
-            },
-            {
-              type: "send_sms",
-              to: "{{customerPhone}}",
-              body: "Hi {{customerName}}, thank you for contacting us. Book an appointment here: {{bookingUrl}}",
             },
           ],
         },

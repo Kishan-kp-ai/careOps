@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   Briefcase,
+  Bot,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -33,6 +34,7 @@ const navItems = (slug: string) => [
 ]
 
 const ownerItems = (slug: string) => [
+  { href: `/w/${slug}/ai-agent`, label: "AI Agent", icon: Bot },
   { href: `/w/${slug}/staff`, label: "Staff", icon: Users },
   { href: `/w/${slug}/settings`, label: "Settings", icon: Settings },
 ]
