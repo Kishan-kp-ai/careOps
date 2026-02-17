@@ -1,15 +1,16 @@
+"use client"
+
 import Link from "next/link"
 import {
   Calendar,
   MessageSquare,
   FileText,
   Package,
-  Users,
-  LayoutDashboard,
   ArrowRight,
   CheckCircle2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ScrollReveal } from "@/components/scroll-reveal"
 
 const features = [
   {
@@ -89,58 +90,65 @@ export default function LandingPage() {
       <section className="relative bg-cover bg-center px-6 pb-20 pt-28 text-center lg:pt-40 lg:pb-28" style={{ backgroundImage: "url('/hero-bg.jpg')" }}>
         <div className="absolute inset-0 bg-white/30" />
         <div className="relative">
-          <h2 className="mx-auto max-w-4xl text-5xl font-bold leading-[1.1] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
-            Manage. Automate.
-            <br />
-            Grow your business.
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg font-medium text-gray-800">
-            CareOps is the all-in-one platform where better, faster operations
-            happen.
-          </p>
-          <div className="mt-8">
-            <Button
-              asChild
-              className="rounded-lg bg-gray-900 px-7 py-6 text-base font-medium text-white hover:bg-gray-800"
-            >
-              <Link href="/register">
-                Get CareOps free
-                <ArrowRight className="ml-2 size-4" />
-              </Link>
-            </Button>
-          </div>
+          <ScrollReveal>
+            <h2 className="mx-auto max-w-4xl text-5xl font-bold leading-[1.1] tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
+              Manage. Automate.
+              <br />
+              Grow your business.
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal>
+            <p className="mx-auto mt-6 max-w-xl text-lg font-medium text-gray-800">
+              CareOps is the all-in-one platform where better, faster operations
+              happen.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal>
+            <div className="mt-8">
+              <Button
+                asChild
+                className="rounded-lg bg-gray-900 px-7 py-6 text-base font-medium text-white hover:bg-gray-800"
+              >
+                <Link href="/register">
+                  Get CareOps free
+                  <ArrowRight className="ml-2 size-4" />
+                </Link>
+              </Button>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Feature Cards */}
       <section className="bg-gray-900 px-6 py-16">
         <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="group rounded-2xl bg-gray-800 p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <div className={`flex size-9 items-center justify-center rounded-lg ${feature.bg}`}>
-                  <feature.icon className={`size-[18px] ${feature.color}`} />
-                </div>
-                <h3 className="text-lg font-semibold text-white">
-                  {feature.title}
-                </h3>
-                <span className={`rounded-full ${feature.bg} px-2.5 py-0.5 text-[11px] font-medium ${feature.color}`}>
-                  {feature.tag}
-                </span>
-              </div>
-              <p className="text-sm leading-relaxed text-gray-400">
-                {feature.description}
-              </p>
-              <Link
-                href="/register"
-                className={`mt-4 inline-flex items-center text-sm font-medium ${feature.color} opacity-0 transition-opacity group-hover:opacity-100`}
+          {features.map((feature, i) => (
+            <ScrollReveal key={feature.title} className={`delay-[${i * 100}ms]`}>
+              <div
+                className="group rounded-2xl bg-gray-800 p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md h-full"
               >
-                Learn more <ArrowRight className="ml-1 size-3.5" />
-              </Link>
-            </div>
+                <div className="mb-4 flex items-center gap-3">
+                  <div className={`flex size-9 items-center justify-center rounded-lg ${feature.bg}`}>
+                    <feature.icon className={`size-[18px] ${feature.color}`} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">
+                    {feature.title}
+                  </h3>
+                  <span className={`rounded-full ${feature.bg} px-2.5 py-0.5 text-[11px] font-medium ${feature.color}`}>
+                    {feature.tag}
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed text-gray-400">
+                  {feature.description}
+                </p>
+                <Link
+                  href="/register"
+                  className={`mt-4 inline-flex items-center text-sm font-medium ${feature.color} opacity-0 transition-opacity group-hover:opacity-100`}
+                >
+                  Learn more <ArrowRight className="ml-1 size-3.5" />
+                </Link>
+              </div>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -152,57 +160,63 @@ export default function LandingPage() {
         className="border-t border-gray-100 px-6 py-24 bg-cover bg-center"
         style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('/steps-bg.jpg')" }}
       >
-        <div className="mx-auto max-w-xl text-center">
-          <h3 className="text-3xl font-bold tracking-tight text-gray-900">
-            Get started in minutes
-          </h3>
-          <p className="mt-3 font-semibold text-gray-900">
-            Our guided onboarding walks you through every step.
-          </p>
-        </div>
-        <div className="mx-auto mt-12 max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-          <div className="relative space-y-0">
-            <div className="absolute bottom-4 left-[15px] top-4 w-px bg-gray-200" />
-            {steps.map((step, i) => (
-              <div
-                key={step}
-                className="group relative flex items-center gap-4 py-3"
-              >
-                <span className="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white ring-4 ring-white">
-                  {i + 1}
-                </span>
-                <span className="text-sm font-medium text-gray-700">
-                  {step}
-                </span>
-                <CheckCircle2 className="ml-auto size-4 text-green-500 opacity-0 transition-opacity group-hover:opacity-100" />
-              </div>
-            ))}
+        <ScrollReveal>
+          <div className="mx-auto max-w-xl text-center">
+            <h3 className="text-3xl font-bold tracking-tight text-gray-900">
+              Get started in minutes
+            </h3>
+            <p className="mt-3 font-semibold text-gray-900">
+              Our guided onboarding walks you through every step.
+            </p>
           </div>
-        </div>
+        </ScrollReveal>
+        <ScrollReveal>
+          <div className="mx-auto mt-12 max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+            <div className="relative space-y-0">
+              <div className="absolute bottom-4 left-[15px] top-4 w-px bg-gray-200" />
+              {steps.map((step, i) => (
+                <div
+                  key={step}
+                  className="group relative flex items-center gap-4 py-3"
+                >
+                  <span className="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white ring-4 ring-white">
+                    {i + 1}
+                  </span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {step}
+                  </span>
+                  <CheckCircle2 className="ml-auto size-4 text-green-500 opacity-0 transition-opacity group-hover:opacity-100" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </ScrollReveal>
       </section>
 
       {/* CTA */}
       <section className="bg-gray-900 px-6 py-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <h3 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            Start using CareOps today
-          </h3>
-          <p className="mx-auto mt-4 max-w-lg text-gray-400">
-            Join businesses that have simplified their workflow. Set up in
-            minutes, not hours.
-          </p>
-          <div className="mt-8">
-            <Button
-              asChild
-              className="rounded-lg bg-white px-7 py-6 text-base font-medium text-gray-900 hover:bg-gray-100"
-            >
-              <Link href="/register">
-                Get CareOps free
-                <ArrowRight className="ml-2 size-4" />
-              </Link>
-            </Button>
+        <ScrollReveal>
+          <div className="mx-auto max-w-3xl text-center">
+            <h3 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+              Start using CareOps today
+            </h3>
+            <p className="mx-auto mt-4 max-w-lg text-gray-400">
+              Join businesses that have simplified their workflow. Set up in
+              minutes, not hours.
+            </p>
+            <div className="mt-8">
+              <Button
+                asChild
+                className="rounded-lg bg-white px-7 py-6 text-base font-medium text-gray-900 hover:bg-gray-100"
+              >
+                <Link href="/register">
+                  Get CareOps free
+                  <ArrowRight className="ml-2 size-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Footer */}

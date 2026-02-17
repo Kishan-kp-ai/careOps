@@ -1,7 +1,6 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import Link from "next/link"
 import { format, isAfter } from "date-fns"
 import {
   CalendarIcon,
@@ -12,7 +11,6 @@ import {
   XCircleIcon,
   CheckCircleIcon,
   AlertCircleIcon,
-  EyeIcon,
   CalendarOffIcon,
 } from "lucide-react"
 import type { BookingStatus } from "@/generated/prisma/client"
@@ -302,13 +300,7 @@ function ActionsMenu({
             Cancel
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href={`/w/${workspaceSlug}/bookings/${booking.id}`}>
-            <EyeIcon />
-            View Details
-          </Link>
-        </DropdownMenuItem>
+
       </DropdownMenuContent>
     </DropdownMenu>
   )
